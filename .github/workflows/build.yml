@@ -1,0 +1,42 @@
+name: Build Arena APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository files
+        uses: actions/checkout@v4
+
+      - name: Extract Android project
+        run: unzip -q ArenaMobile-GitHub-Build.zip
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+
+      - name: Build APK
+        working-directory: ArenaMobile
+        run: gradle :app:assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Arena-APK
+          path: ArenaMobile/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
