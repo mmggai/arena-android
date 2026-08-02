@@ -31,8 +31,10 @@ jobs:
           gradle-version: "8.11.1"
 
       - name: Build APK
-        working-directory: ArenaMobile
-        run: gradle :app:assembleDebug --no-daemon
+  working-directory: ArenaMobile
+  run: |
+    printf '\nandroid { compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 } }\nkotlin { jvmToolchain(17) }\n' >> app/build.gradle.kts
+    gradle :app:assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
